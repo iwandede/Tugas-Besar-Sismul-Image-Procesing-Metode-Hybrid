@@ -72,6 +72,9 @@ import java.awt.Color;
         menuItem = new JMenuItem("Swirl");
         menuItem.addActionListener(new SwirlListener());
         menu.add(menuItem);
+        menuItem = new JMenuItem("RGB");
+        menuItem.addActionListener(new RGBListener());
+        menu.add(menuItem);
 
         return menuBar;
     }
