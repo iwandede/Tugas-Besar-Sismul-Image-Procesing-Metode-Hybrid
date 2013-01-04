@@ -72,6 +72,9 @@ import java.awt.Color;
         menuItem = new JMenuItem("Swirl");
         menuItem.addActionListener(new SwirlListener());
         menu.add(menuItem);
+        menuItem = new JMenuItem("RGB");
+        //menuItem.addActionListener(new RGBListener());
+        //menu.add(menuItem);
 
         return menuBar;
     }
@@ -146,7 +149,7 @@ import java.awt.Color;
         }
     }
 
-    // darken the image 
+
     private class ColorSeparationListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int width  = pic.width();
@@ -170,21 +173,7 @@ import java.awt.Color;
             B.show();
         }
     }
-    /* grayscale
-    private class GrayscaleListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            for (int y = 0; y < pic.height(); y++) {
-                for (int x = 0; x < pic.width(); x++) {
-                    Color color = pic.get(y, x);
-                    Color gray = Luminance.toGray(color);
-                    pic.set(x, y, gray);
-                }
-            }
-            repaint();
-        }
-    }
-     * 
-     */
+
     // Wave
     private class WaveListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
@@ -228,6 +217,7 @@ import java.awt.Color;
             repaint();
         }
     }
+
     
     // create one frame object
     public static void main(String[] args) {
