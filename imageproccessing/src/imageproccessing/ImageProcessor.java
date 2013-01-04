@@ -64,8 +64,8 @@ import java.awt.Color;
         menuItem.addActionListener(new ColorSeparationListener());
         menu.add(menuItem);
         menuItem = new JMenuItem("Grayscale");
-        menuItem.addActionListener(new GrayscaleListener());
-        menu.add(menuItem);
+        //menuItem.addActionListener(new GrayscaleListener());
+        //menu.add(menuItem);
         menuItem = new JMenuItem("Wave");
         menuItem.addActionListener(new WaveListener());
         menu.add(menuItem);
@@ -146,7 +146,88 @@ import java.awt.Color;
         }
     }
 
+    // darken the image 
+    private class ColorSeparationListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int width  = pic.width();
+            int height = pic.height();
+            Picture R = new Picture(width, height);
+            Picture G = new Picture(width, height);
+            Picture B = new Picture(width, height);
+            for (int y = 0; y < pic.height(); y++) {
+                for (int x = 0; x < pic.width(); x++) {
+                    Color c = pic.get(x, y);
+                    int r = c.getRed();
+                    int g = c.getGreen();
+                    int b = c.getBlue();
+                    R.set(x, y, new Color(r, 0, 0));
+                    G.set(x, y, new Color(0, g, 0));
+                    B.set(x, y, new Color(0, 0, b));
+                }
+            }
+            R.show();
+            G.show();
+            B.show();
+        }
+    }
+    /* grayscale
+    private class GrayscaleListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            for (int y = 0; y < pic.height(); y++) {
+                for (int x = 0; x < pic.width(); x++) {
+                    Color color = pic.get(y, x);
+                    Color gray = Luminance.toGray(color);
+                    pic.set(x, y, gray);
+                }
+            }
+            repaint();
+        }
+    }
+     * 
+     */
+    // Wave
+    private class WaveListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int width  = pic.width();
+            int height = pic.height();
+
+            for (int y = 0; y < pic.height(); y++) {
+                for (int x = 0; x < pic.width(); x++) {
+                int yy = y;
+                int xx = (int) (x + 20 * Math.sin(y* 2 * Math.PI / 64));
+                    if (xx >= 0 && xx < width) {
+                    pic.set(x, y, pic.get(xx, yy));
+                    }
+                }
+            }
+            repaint();
+        }
+    }
     
+    private class SwirlListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int width  = pic.width();
+            int height = pic.height();
+            double x0 = 0.5 * (width  - 1);
+            double y0 = 0.5 * (height - 1);
+
+            for (int sx = 0; sx < width; sx++) {
+            for (int sy = 0; sy < height; sy++) {
+                double dx = sx - x0;
+                double dy = sy - y0;
+                double r = Math.sqrt(dx*dx + dy*dy);
+                double angle = Math.PI / 256 * r;
+                int tx = (int) (+dx * Math.cos(angle) - dy * Math.sin(angle) + x0);
+                int ty = (int) (+dx * Math.sin(angle) + dy * Math.cos(angle) + y0);
+
+                // plot pixel (sx, sy) the same color as (tx, ty) if it's in bounds
+                if (tx >= 0 && tx < width && ty >= 0 && ty < height)
+                    pic.set(sx, sy, pic.get(tx, ty));
+            }
+        }
+            repaint();
+        }
+    }
     
     // create one frame object
     public static void main(String[] args) {
