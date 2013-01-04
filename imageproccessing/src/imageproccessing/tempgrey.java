@@ -10,8 +10,8 @@ public class tempgrey {
     public static void main(String[] args) {
         BufferedImage org = getImage("test.jpg");//valid input image
         BufferedImage greyImage = getGrayScaleAvg(org);
-        new ImageFrame(org, "Original");
-        new ImageFrame(greyImage, "After GrayScale");
+        //new ImageFrame(org, "Original");
+        //new ImageFrame(greyImage, "After GrayScale");
     }
 
     public static BufferedImage getImage(String imageName) {
