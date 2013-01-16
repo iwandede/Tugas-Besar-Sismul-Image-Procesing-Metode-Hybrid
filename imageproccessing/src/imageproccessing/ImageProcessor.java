@@ -60,21 +60,30 @@ import java.awt.Color;
         menuItem = new JMenuItem("Darken");
         menuItem.addActionListener(new DarkenListener());
         menu.add(menuItem);
-        menuItem = new JMenuItem("Color Separation");
-        menuItem.addActionListener(new ColorSeparationListener());
+        menuItem = new JMenuItem("HSV");
+        menuItem.addActionListener(new hsvListener());        
         menu.add(menuItem);
-        menuItem = new JMenuItem("Grayscale");
-        //menuItem.addActionListener(new GrayscaleListener());
-        //menu.add(menuItem);
         menuItem = new JMenuItem("Wave");
         menuItem.addActionListener(new WaveListener());
         menu.add(menuItem);
         menuItem = new JMenuItem("Swirl");
         menuItem.addActionListener(new SwirlListener());
         menu.add(menuItem);
-        menuItem = new JMenuItem("RGB");
-        //menuItem.addActionListener(new RGBListener());
-        //menu.add(menuItem);
+        menuItem = new JMenuItem("Treshold");
+        menuItem.addActionListener(new TresholdListener());
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Grayscale");
+        menuItem.addActionListener(new GrayscaleListener());
+        menu.add(menuItem);
+        menuItem = new JMenuItem("Countour");
+        menuItem.addActionListener(new CountourListener());
+        menu.add(menuItem);
+        menu = new JMenu("Reset");
+        menu.setMnemonic(KeyEvent.VK_F); 
+        menuBar.add(menu);
+        menuItem = new JMenuItem("Undo");
+        menuItem.addActionListener(new resetFileListener());
+        menu.add(menuItem);
 
         return menuBar;
     }
@@ -149,8 +158,8 @@ import java.awt.Color;
         }
     }
 
-
-    private class ColorSeparationListener implements ActionListener {
+    // HSV the image
+    private class hsvListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int width  = pic.width();
             int height = pic.height();
@@ -173,8 +182,8 @@ import java.awt.Color;
             B.show();
         }
     }
-
-    // Wave
+    
+    // wave the image
     private class WaveListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int width  = pic.width();
@@ -193,6 +202,7 @@ import java.awt.Color;
         }
     }
     
+    // swirl the image
     private class SwirlListener implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             int width  = pic.width();
@@ -217,7 +227,101 @@ import java.awt.Color;
             repaint();
         }
     }
+    
+    // treshold the image
+    private class TresholdListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            int THRESHOLD = 180;
+            for (int i = 0; i < pic.width(); i++) {
+            for (int j = 0; j < pic.height(); j++) {
+                Color color = pic.get(i, j);
+                double lum = Luminance.lum(color);
+                if (lum >= THRESHOLD) pic.set(i, j, Color.WHITE);
+                else                  pic.set(i, j, Color.BLACK);
+                }            
+            repaint();
+            }
+        }
+    }
+    
+    // grayscale the image
+    private class GrayscaleListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+        //Picture pic = new Picture(args[0]);
+        for (int i = 0; i < pic.width(); i++) {
+            for (int y = 0; y < pic.height(); y++) {
+                Color color = pic.get(i,y);
+                Color gray = Luminance.toGray(color);
+                pic.set(i, y, gray);
+            }
+        }
+        repaint();
+        }
+    }
+    
+    // countour the image
+    private class CountourListener implements ActionListener{
+      public int truncate(int a) {
+        if(a < 0) return 0;
+        else if (a > 255) return 255;
+        else return a;
+        }
+       public void actionPerformed(ActionEvent e) {
+            int[][] filter1 = { {-1,0,1},
+                                {-2,0,2},
+                                {-1,0,1}
+                              };
+            int[][] filter2 = { {  1,  2,  1 },
+                                {  0,  0,  0 },
+                                { -1, -2, -1 }
+                              };
 
+            //Picture pic0 = new Picture(args[0]);
+            int width    = pic.width();
+            int height   = pic.height();
+            Picture pic1 = new Picture(width, height);
+
+
+            for (int y = 1; y < height - 1; y++) {
+                for (int x = 1; x < width - 1; x++) {
+
+                    // get 3-by-3 array of colors in neighborhood
+                    int[][] gray = new int[3][3];
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            gray[i][j] = (int) Luminance.lum(pic.get(x-1+i, y-1+j));
+                        }
+                    }
+
+                    // apply filter
+                    int gray1 = 0, gray2 = 0;
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            gray1 += gray[i][j] * filter1[i][j];
+                            gray2 += gray[i][j] * filter2[i][j];
+                        }
+                    }
+                    //int magnitude = 255 - truncate(Math.abs(gray1) + Math.abs(gray2));
+                    int magnitude = 255 - truncate((int) Math.sqrt(gray1*gray1 + gray2*gray2));
+                    Color grayscale = new Color(magnitude, magnitude, magnitude);
+                    pic1.set(x, y, grayscale);
+                }
+            }
+            //pic.show();
+            pic1.show();
+            // pic1.save("baboon-edge.jpg");
+        }
+    }
+    
+    // undo
+    private class resetFileListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+        File file = chooser.getSelectedFile();
+        pic = new Picture(file);
+        setContentPane(pic.getJLabel());
+        pack();
+        }
+    }
     
     // create one frame object
     public static void main(String[] args) {
