@@ -7,15 +7,10 @@ public class ColorHelper
 {
     private final static int H_STEPS = 12;
     private final static int S_STEPS = 3;
-
     private final static float S_STEP_VALUE = 0.05f;
-
     private final static float S_MIN_VALUE = 0.15f;
-
     private final static List<String> staticColors ;
-
-    static
-    {
+    static{
         List<String> colors = new ArrayList<String>();
         float v = 1.0f;
         for (int j = 0; j < H_STEPS; j++)
